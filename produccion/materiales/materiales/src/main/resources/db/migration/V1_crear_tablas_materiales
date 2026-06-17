@@ -1,0 +1,6 @@
+CREATE TABLE materiales (
+   idMaterial INT AUTO_INCREMENT PRIMARY KEY,
+   nombreMaterial VARCHAR(255) NOT NULL,
+   cantidadStock INT NOT NULL,
+   nombreProveedor VARCHAR(255) NOT NULL
+);

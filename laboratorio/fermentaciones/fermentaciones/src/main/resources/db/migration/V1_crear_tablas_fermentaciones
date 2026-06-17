@@ -1,0 +1,5 @@
+CREATE TABLE fermentaciones (
+   idFermentation INT AUTO_INCREMENT PRIMARY KEY,
+   codigoTanque VARCHAR(10) NOT NULL,
+   temperaturaActual INT NOT NULL
+);

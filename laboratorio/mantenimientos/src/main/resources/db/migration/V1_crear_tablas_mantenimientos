@@ -1,0 +1,9 @@
+CREATE TABLE mantenimientos (
+   idMantenimiento INT AUTO_INCREMENT PRIMARY KEY,
+   tipoEquipo VARCHAR(255) NOT NULL,
+   codigoEquipo VARCHAR(10) NOT NULL,
+   estadoEquipo VARCHAR(255) NOT NULL,
+   estadoMantenimiento VARCHAR(255) NOT NULL,
+   idFermentation INT NOT NULL  
+
+);
