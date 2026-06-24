@@ -1,0 +1,61 @@
+server:
+    port: 8080
+
+spring:
+    application:
+        name: gateway
+
+    cloud:
+        gateway:
+            server:
+                webmvc:
+                    routes:
+                    -   id: calidades-service
+                        uri: http://127.0.0.1:8081
+                        predicates:
+                        - Path=/api/calidades/**
+
+                    -   id: despachos-service
+                        uri: http://127.0.0.1:8082
+                        predicates:
+                        - Path=/api/despachos/**
+
+                    -   id: envasados-service
+                        uri: http://127.0.0.1:8083
+                        predicates:
+                        - Path=/api/envasados/**
+
+                    -   id: fermentaciones-service
+                        uri: http://127.0.0.1:8084
+                        predicates:
+                        - Path=/api/fermentaciones/**
+
+                    -   id: mantenimientos-service
+                        uri: http://127.0.0.1:8085
+                        predicates:
+                            - Path=/api/v1/mantenimientos/**
+
+                    -   id: materiales-service
+                        uri: http://127.0.0.1:8086
+                        predicates:
+                        - Path=/api/materiales/**
+
+                    -   id: pedido-service
+                        uri: http://127.0.0.1:8087
+                        predicates:
+                            - Path=/api/pedidos/**
+
+                    -   id: producciones-service
+                        uri: http://127.0.0.1:8088
+                        predicates:
+                            - Path=/api/producciones/**
+
+                    -   id: recetas-service
+                        uri: http://127.0.0.1:8089
+                        predicates:
+                            - Path=/api/recetas/**
+
+                    -   id: stocks-service
+                        uri: http://127.0.0.1:8090
+                        predicates:
+                            - Path=/api/stocks/**
