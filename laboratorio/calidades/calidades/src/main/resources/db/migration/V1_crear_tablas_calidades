@@ -1,0 +1,9 @@
+CREATE TABLE mantenimientos (
+   idQuality INT AUTO_INCREMENT PRIMARY KEY,
+   cantidadPh INT NOT NULL,
+   controlQuality BOOLEAN DEFAULT FALSE,
+   estadoEquipo VARCHAR(255) NOT NULL,
+   estadoMantenimiento VARCHAR(255) NOT NULL,
+   idFermentation INT NOT NULL  
+
+);
