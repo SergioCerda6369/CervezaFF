@@ -1,19 +1,49 @@
 server:
     port: 0
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 spring:
     application:
-        name: calidades
-    datasource:
-        url: jdbc:mysql://localhost:3306/db_fabrica_cerveza?createDatabaseIfNotExist=true
-        username: root
-        password: 
-        driver-class-name: com.mysql.cj.jdbc.Driver
-    jpa:
-        hibernate:
-            ddl-auto: none
-        show-sql: true
+        name: calidades-service
     flyway:
         enabled: true
         baseline-on-migrate: true
         table: flyway_schema_history_calidades
+    jpa:
+        show-sql: true
+    profiles:
+        active: dev
+
+---
+
+spring:
+    config:
+        activate:
+            on-profile: dev
+    datasource:
+        url: jdbc:mysql://localhost:3306/db_fabrica_cerveza_dev?createDatabaseIfNotExist=true
+        username: root
+        password: ''
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        
+---
+
+spring:
+    config:
+        activate:
+            on-profile: prod
+    datasource:
+        url: jdbc:mysql://localhost:3306/db_fabrica_cerveza_prod?createDatabaseIfNotExist=true
+        username: root
+        password: ''
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: none

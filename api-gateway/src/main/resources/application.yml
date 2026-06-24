@@ -11,51 +11,51 @@ spring:
                 webmvc:
                     routes:
                     -   id: calidades-service
-                        uri: http://127.0.0.1:8081
+                        uri: lb://calidades-service
                         predicates:
                         - Path=/api/calidades/**
 
                     -   id: despachos-service
-                        uri: http://127.0.0.1:8082
+                        uri: lb://despachos-service
                         predicates:
                         - Path=/api/despachos/**
 
                     -   id: envasados-service
-                        uri: http://127.0.0.1:8083
+                        uri: lb://envasados-service
                         predicates:
                         - Path=/api/envasados/**
 
                     -   id: fermentaciones-service
-                        uri: http://127.0.0.1:8084
+                        uri: lb://fermentaciones-service
                         predicates:
                         - Path=/api/fermentaciones/**
 
                     -   id: mantenimientos-service
-                        uri: http://127.0.0.1:8085
+                        uri: lb://mantenimientos-service
                         predicates:
                             - Path=/api/v1/mantenimientos/**
 
                     -   id: materiales-service
-                        uri: http://127.0.0.1:8086
+                        uri: lb://materiales-service
                         predicates:
                         - Path=/api/materiales/**
 
                     -   id: pedido-service
-                        uri: http://127.0.0.1:8087
+                        uri: lb://pedido-service
                         predicates:
                             - Path=/api/pedidos/**
 
                     -   id: producciones-service
-                        uri: http://127.0.0.1:8088
+                        uri: lb://producciones-service
                         predicates:
                             - Path=/api/producciones/**
 
                     -   id: recetas-service
-                        uri: http://127.0.0.1:8089
+                        uri: lb://recetas-service
                         predicates:
                             - Path=/api/recetas/**
 
                     -   id: stocks-service
-                        uri: http://127.0.0.1:8090
+                        uri: lb://stocks-service
                         predicates:
                             - Path=/api/stocks/**
