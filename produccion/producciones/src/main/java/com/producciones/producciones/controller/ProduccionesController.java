@@ -2,19 +2,22 @@ package com.producciones.producciones.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
 import com.producciones.producciones.dto.ProduccionesDTO;
 import com.producciones.producciones.model.Producciones;
 import com.producciones.producciones.service.ProduccionesService;
+import com.producciones.producciones.assembler.ProduccionesAssembler;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/v1/producciones")
@@ -23,29 +26,44 @@ public class ProduccionesController {
     @Autowired
     private ProduccionesService produccionesService;
 
-    @GetMapping
-    public ResponseEntity<List<ProduccionesDTO>> todas() {
-        List<ProduccionesDTO> lista = produccionesService.obtenerTodos();
-        return new ResponseEntity<>(lista, HttpStatus.OK);
+    @Autowired
+    private ProduccionesAssembler assembler;
+
+    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<CollectionModel<EntityModel<ProduccionesDTO>>> todas() {
+        List<EntityModel<ProduccionesDTO>> lista = produccionesService.obtenerTodos().stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+
+        if (lista.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(CollectionModel.of(
+                lista,
+                linkTo(methodOn(ProduccionesController.class).todas()).withSelfRel()
+        ));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> porId(@PathVariable Integer id) {
+    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<ProduccionesDTO>> porId(@PathVariable Integer id) {
         try {
             ProduccionesDTO dto = produccionesService.buscarPorId(id);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok(assembler.toModel(dto));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> registrar(@Valid @RequestBody Producciones produccion) {
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<ProduccionesDTO>> registrar(@Valid @RequestBody Producciones produccion) {
         try {
             ProduccionesDTO dto = produccionesService.guardar(produccion);
-            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+            return ResponseEntity
+                    .created(linkTo(methodOn(ProduccionesController.class).porId(dto.getIdProduccion())).toUri())
+                    .body(assembler.toModel(dto));
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al registrar la orden de producción", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
     }
 }

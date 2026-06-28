@@ -20,6 +20,7 @@ import com.mantenimientos.mantenimientos.dto.MantenimientosDTO;
 import com.mantenimientos.mantenimientos.model.Mantenimientos;
 import com.mantenimientos.mantenimientos.repository.MantenimientosRepository;
 import com.mantenimientos.mantenimientos.service.MantenimientosService;
+import com.mantenimientos.mantenimientos.service.MantenimientosValidaciones;
 
 import net.datafaker.Faker;
 
@@ -28,6 +29,9 @@ class MantenimientosApplicationTests {
 
     @Mock
     private MantenimientosRepository mantenimientosRepository;
+
+    @Mock
+    private MantenimientosValidaciones mantenimientosValidaciones;
 
     @InjectMocks
     private MantenimientosService mantenimientosService;
@@ -57,7 +61,17 @@ class MantenimientosApplicationTests {
                 .idFermentation(idFermentationSimulado)
                 .build();
 
+        MantenimientosDTO dtoFalso = MantenimientosDTO.builder()
+                .idMantenimiento(idSimulado)
+                .tipoEquipo(tipoEquipoSimulado)
+                .codigoEquipo(codigoEquipoSimulado)
+                .estadoEquipo(estadoEquipoSimulado)
+                .estadoMantenimiento(estadoMantenimientoSimulado)
+                .idFermentacion(idFermentationSimulado)
+                .build();
+
         when(mantenimientosRepository.findById(idSimulado)).thenReturn(Optional.of(mantenimientoFalso));
+        when(mantenimientosValidaciones.convertirADto(mantenimientoFalso)).thenReturn(dtoFalso);
 
         MantenimientosDTO resultado = mantenimientosService.buscarPorId(idSimulado);
 

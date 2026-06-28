@@ -1,22 +1,24 @@
 package com.stocks.stocks.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.stocks.stocks.dto.StocksDTO;
 import com.stocks.stocks.model.Stocks;
 import com.stocks.stocks.service.StocksService;
+import com.stocks.stocks.assembler.StocksAssembler;
 
 import jakarta.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/v1/stocks")
@@ -25,29 +27,44 @@ public class StocksController {
     @Autowired
     private StocksService stocksService;
 
-    @GetMapping
-    public ResponseEntity<List<StocksDTO>> todas() {
-        List<StocksDTO> lista = stocksService.obtenerTodos();
-        return new ResponseEntity<>(lista, HttpStatus.OK);
+    @Autowired
+    private StocksAssembler assembler;
+
+    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<CollectionModel<EntityModel<StocksDTO>>> todas() {
+        List<EntityModel<StocksDTO>> lista = stocksService.obtenerTodos().stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+
+        if (lista.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(CollectionModel.of(
+                lista,
+                linkTo(methodOn(StocksController.class).todas()).withSelfRel()
+        ));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> porId(@PathVariable Integer id) {
+    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<StocksDTO>> porId(@PathVariable Integer id) {
         try {
             StocksDTO dto = stocksService.buscarPorId(id);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok(assembler.toModel(dto));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> registrar(@Valid @RequestBody Stocks stock) {
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<StocksDTO>> registrar(@Valid @RequestBody Stocks stock) {
         try {
             StocksDTO dto = stocksService.guardar(stock);
-            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+            return ResponseEntity
+                    .created(linkTo(methodOn(StocksController.class).porId(dto.getIdStockFinal())).toUri())
+                    .body(assembler.toModel(dto));
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al registrar el stock de producto", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
     }
 }

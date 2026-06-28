@@ -14,22 +14,34 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class MaterialService {
+
     @Autowired
     private MaterialRepository materialRepository;
+
+    @Autowired
+    private MaterialValidaciones validaciones;
 
     @Transactional
     public List<MaterialDTO> obtenerTodos() {
         List<Material> lista = materialRepository.findAll();
         List<MaterialDTO> dtos = new ArrayList<>();
         for (Material m : lista) {
-            dtos.add(convertirADTO(m));
+            dtos.add(validaciones.convertirADTO(m));
         }
         return dtos;
     }
 
     @Transactional
+    public MaterialDTO buscarPorId(Integer id) {
+        Material m = materialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material con ID " + id + " no encontrado."));
+        return validaciones.convertirADTO(m);
+    }
+
+    @Transactional
     public MaterialDTO guardar(Material m) {
-        return convertirADTO(materialRepository.save(m));
+        validaciones.validarCampos(m);
+        return validaciones.convertirADTO(materialRepository.save(m));
     }
 
     @Transactional
@@ -40,14 +52,4 @@ public class MaterialService {
         }
         return false;
     }
-
-    private MaterialDTO convertirADTO(Material m) {
-        MaterialDTO dto = new MaterialDTO();
-        dto.setIdMaterial(m.getIdMaterial());
-        dto.setNombreMaterial(m.getNombreMaterial());
-        dto.setCantidadStock(m.getCantidadStock());
-        dto.setNombreProveedor(m.getNombreProveedor());
-        return dto;
-    }
-
 }
