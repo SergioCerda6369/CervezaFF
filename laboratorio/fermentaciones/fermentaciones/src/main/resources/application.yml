@@ -1,0 +1,67 @@
+server:
+    port: 0
+
+springdoc:
+  api-docs:
+    path: /fermentaciones/api-docs
+
+eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8761/eureka/
+
+spring:
+    application:
+        name: fermentaciones-service
+    flyway:
+        enabled: 'true'
+        baseline-on-migrate: 'true'
+        table: flyway_schema_history_fermentaciones
+    jpa:
+        show-sql: 'true'
+    profiles:
+        active: dev
+
+---
+spring:
+    config:
+        activate:
+            on-profile: dev
+    datasource:
+        url: jdbc:mysql://localhost:3306/db_fabrica_cerveza?createDatabaseIfNotExist=true
+        username: root
+        password: ''
+        driverClassName: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+
+---
+
+spring:
+    config:
+        activate:
+            on-profile: test
+    datasource:
+        url: jdbc:mysql://localhost:3306/db_fabrica_cerveza_prod?createDatabaseIfNotExist=true
+        username: root
+        password: ''
+        driverClassName: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+
+---
+
+spring:
+    config:
+        activate:
+            on-profile: prod
+    datasource:
+        url: jdbc:mysql://localhost:3306/db_fabrica_cerveza_prod?createDatabaseIfNotExist=true
+        username: root
+        password: ''
+        driverClassName: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: none
