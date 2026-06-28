@@ -59,3 +59,29 @@ spring:
                         uri: lb://stocks-service
                         predicates:
                             - Path=/api/stocks/**
+springdoc:
+    swagger-ui:
+        path: /swagger-ui/index.html
+        urls:
+        -   name: 1. Calidades
+            url: /api/calidades/v3/api-docs
+        -   name: 2. Despachos
+            url: /api/despachos/v3/api-docs
+        -   name: 3. Envasados
+            url: /api/envasados/v3/api-docs
+        -   name: 4. Fermentaciones
+            url: /api/fermentaciones/v3/api-docs
+        -   name: 5. Mantenimientos
+            url: /api/v1/mantenimientos/v3/api-docs
+        -   name: 6. Materiales
+            url: /api/materiales/v3/api-docs
+        -   name: 7. Pedidos
+            url: /api/pedidos/v3/api-docs
+        -   name: 8. Producciones
+            url: /api/producciones/v3/api-docs
+        -   name: 9. Recetas
+            url: /api/recetas/v3/api-docs
+        -   name: 10. Stocks
+            url: /api/stocks/v3/api-docs
+    api-docs:
+        enabled: true
