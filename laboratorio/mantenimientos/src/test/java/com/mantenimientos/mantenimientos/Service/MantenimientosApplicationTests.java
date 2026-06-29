@@ -8,12 +8,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mantenimientos.mantenimientos.dto.MantenimientosDTO;
@@ -36,12 +34,7 @@ class MantenimientosApplicationTests {
     @InjectMocks
     private MantenimientosService mantenimientosService;
 
-    private Faker faker = new Faker();
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    private final Faker faker = new Faker();
 
     @Test
     void testBuscarPorIdExitoso() {
@@ -52,23 +45,21 @@ class MantenimientosApplicationTests {
         String estadoMantenimientoSimulado = faker.options().option("Pendiente", "En Proceso", "Completado");
         Integer idFermentationSimulado = faker.number().numberBetween(1, 50);
 
-        Mantenimientos mantenimientoFalso = Mantenimientos.builder()
-                .idMantenimiento(idSimulado)
-                .tipoEquipo(tipoEquipoSimulado)
-                .codigoEquipo(codigoEquipoSimulado)
-                .estadoEquipo(estadoEquipoSimulado)
-                .estadoMantenimiento(estadoMantenimientoSimulado)
-                .idFermentation(idFermentationSimulado)
-                .build();
+        Mantenimientos mantenimientoFalso = new Mantenimientos();
+        mantenimientoFalso.setIdMantenimiento(idSimulado);
+        mantenimientoFalso.setTipoEquipo(tipoEquipoSimulado);
+        mantenimientoFalso.setCodigoEquipo(codigoEquipoSimulado);
+        mantenimientoFalso.setEstadoEquipo(estadoEquipoSimulado);
+        mantenimientoFalso.setEstadoMantenimiento(estadoMantenimientoSimulado);
+        mantenimientoFalso.setIdFermentation(idFermentationSimulado);
 
-        MantenimientosDTO dtoFalso = MantenimientosDTO.builder()
-                .idMantenimiento(idSimulado)
-                .tipoEquipo(tipoEquipoSimulado)
-                .codigoEquipo(codigoEquipoSimulado)
-                .estadoEquipo(estadoEquipoSimulado)
-                .estadoMantenimiento(estadoMantenimientoSimulado)
-                .idFermentacion(idFermentationSimulado)
-                .build();
+        MantenimientosDTO dtoFalso = new MantenimientosDTO();
+        dtoFalso.setIdMantenimiento(idSimulado);
+        dtoFalso.setTipoEquipo(tipoEquipoSimulado);
+        dtoFalso.setCodigoEquipo(codigoEquipoSimulado);
+        dtoFalso.setEstadoEquipo(estadoEquipoSimulado);
+        dtoFalso.setEstadoMantenimiento(estadoMantenimientoSimulado);
+        dtoFalso.setIdFermentacion(idFermentationSimulado);
 
         when(mantenimientosRepository.findById(idSimulado)).thenReturn(Optional.of(mantenimientoFalso));
         when(mantenimientosValidaciones.convertirADto(mantenimientoFalso)).thenReturn(dtoFalso);

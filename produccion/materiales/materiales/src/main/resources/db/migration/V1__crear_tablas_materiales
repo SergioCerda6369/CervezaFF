@@ -1,0 +1,12 @@
+CREATE TABLE material (
+    id_material INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_material VARCHAR(255) NOT NULL,
+    cantidad_stock INT NOT NULL,
+    nombre_proveedor VARCHAR(255) NOT NULL
+);
+
+INSERT INTO material (nombre_material, cantidad_stock, nombre_proveedor)
+VALUES ('Malta Base Pale Ale', 1500, 'Distribuidora de Insumos Santiago Ltda');
+
+INSERT INTO material (nombre_material, cantidad_stock, nombre_proveedor)
+VALUES ('Lúpulo Cascade', 500, 'Importadora del Sur de Chile S.A.');

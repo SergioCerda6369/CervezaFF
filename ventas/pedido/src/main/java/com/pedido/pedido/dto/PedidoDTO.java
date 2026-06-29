@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@jsonIgnorePropierties(ignoreUnkown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PedidoDTO {
     private Integer idPedido;
     private String cliente;

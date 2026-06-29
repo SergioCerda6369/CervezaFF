@@ -24,7 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController("qualityControllerV2")
-@RequestMapping("api/v1/calidades")
+@RequestMapping("/api/calidades")
 public class QualityController {
 
     @Autowired

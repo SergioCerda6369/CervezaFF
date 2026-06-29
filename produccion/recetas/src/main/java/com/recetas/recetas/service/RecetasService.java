@@ -18,31 +18,23 @@ public class RecetasService {
     @Autowired
     private RecetasRepository recetasRepository;
 
+    @Autowired
+    private RecetasValidaciones validaciones; // Inyección patrón CSR
+
     public List<RecetasDTO> obtenerTodos() {
         return recetasRepository.findAll().stream()
-                .map(this::convertirADto)
+                .map(validaciones::convertirADto)
                 .collect(Collectors.toList());
     }
 
     public RecetasDTO buscarPorId(Integer id) {
         Recetas receta = recetasRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("La receta con ID " + id + " no existe."));
-        return convertirADto(receta);
+        return validaciones.convertirADto(receta);
     }
 
     public RecetasDTO guardar(Recetas receta) {
         Recetas recetaGuardada = recetasRepository.save(receta);
-        return convertirADto(recetaGuardada);
-    }
-
-    private RecetasDTO convertirADto(Recetas receta) {
-        return RecetasDTO.builder()
-                .idReceta(receta.getIdReceta())
-                .nombreCerveza(receta.getNombreCerveza())
-                .descripcion(receta.getDescripcion())
-                .ingredientes(receta.getIngredientes())
-                .tiempoCoccionMinutos(receta.getTiempoCoccionMinutos())
-                .diasFermentacion(receta.getDiasFermentacion())
-                .build();
+        return validaciones.convertirADto(recetaGuardada);
     }
 }

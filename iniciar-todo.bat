@@ -1,54 +1,59 @@
 @echo off
+echo ============================================================
+echo    INICIANDO ECOSISTEMA DE MICROSERVICIOS - CERVEZAFF
+echo ============================================================
 
-echo Iniciando Servidor de Descubrimiento Eureka (Puerto 8761)...
-cd eureka
+echo 1. Iniciando Servidor de Descubrimiento Eureka (Puerto 8761)...
+cd /d "%~dp0eureka"
 start cmd /k "mvnw spring-boot:run"
 
 echo Esperando 12 segundos a que Eureka se estabilice...
-timeout /t 12 /nobreak > null
+timeout /t 12 /nobreak > nul
 
-echo Iniciando API Gateway...
-cd ../api-gateway
+echo 2. Iniciando API Gateway...
+cd /d "%~dp0api-gateway"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Calidades...
-cd ../laboratorio/calidades
+echo 3. Iniciando Microservicio Calidades...
+cd /d "%~dp0laboratorio\calidades\calidades"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Fermentaciones...
-cd ../fermentaciones
+echo 4. Iniciando Microservicio Fermentaciones...
+cd /d "%~dp0laboratorio\fermentaciones\fermentaciones"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Mantenimientos...
-cd ../mantenimientos
+echo 5. Iniciando Microservicio Mantenimientos...
+cd /d "%~dp0laboratorio\mantenimientos"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Materiales...
-cd ../../produccion/materiales
+echo 6. Iniciando Microservicio Materiales...
+cd /d "%~dp0produccion\materiales\materiales"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Producciones...
-cd ../producciones
+echo 7. Iniciando Microservicio Producciones...
+cd /d "%~dp0produccion\producciones"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Recetas...
-cd ../recetas
+echo 8. Iniciando Microservicio Recetas...
+cd /d "%~dp0produccion\recetas"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Despachos...
-cd ../../ventas/despachos
+echo 9. Iniciando Microservicio Despachos...
+cd /d "%~dp0ventas\despachos\despachos"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Envasados...
-cd ../envasados
+echo 10. Iniciando Microservicio Envasados...
+cd /d "%~dp0ventas\envasados\envasados"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Pedido...
-cd ../pedido
+echo 11. Iniciando Microservicio Pedido...
+cd /d "%~dp0ventas\pedido"
 start cmd /k "mvnw spring-boot:run"
 
-echo Iniciando Microservicio Stocks...
-cd ../stocks
+echo 12. Iniciando Microservicio Stocks...
+cd /d "%~dp0ventas\stocks"
 start cmd /k "mvnw spring-boot:run"
 
-echo Ecosistema lanzado. Dashboard disponible en http://localhost:8761
+echo ============================================================
+echo ¡Ecosistema lanzado! Dashboard disponible en http://localhost:8761
+echo ============================================================

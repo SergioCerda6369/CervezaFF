@@ -18,19 +18,29 @@ public class DispatchService {
     @Autowired
     private DispatchRepository dispatchRepository;
 
+    @Autowired
+    private DispatchValidaciones validaciones;
+
     @Transactional
     public List<DispatchDTO> obtenerTodos() {
         List<Dispatch> lista = dispatchRepository.findAll();
         List<DispatchDTO> dtos = new ArrayList<>();
         for (Dispatch d : lista) {
-            dtos.add(convertirADTO(d));
+            dtos.add(validaciones.convertirADTO(d));
         }
         return dtos;
     }
 
     @Transactional
+    public DispatchDTO buscarPorId(Integer id) {
+        Dispatch d = dispatchRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Despacho con ID " + id + " no encontrado."));
+        return validaciones.convertirADTO(d);
+    }
+
+    @Transactional
     public DispatchDTO guardar(Dispatch d) {
-        return convertirADTO(dispatchRepository.save(d));
+        return validaciones.convertirADTO(dispatchRepository.save(d));
     }
 
     @Transactional
@@ -42,20 +52,10 @@ public class DispatchService {
         return false;
     }
 
-    private DispatchDTO convertirADTO(Dispatch d) {
-        DispatchDTO dto = new DispatchDTO();
-        dto.setIdDispatch(d.getIdDispatch());
-        dto.setPatenteCamion(d.getPatenteCamion());
-        dto.setNombreConductor(d.getNombreConductor());
-        dto.setEstadoDispatch(d.getEstadoDispatch());
-        return dto;
-    }
-
     @Transactional
-    public DispatchDTO buscarPorIdPedido (Integer idPedido) {
+    public DispatchDTO buscarPorIdPedido(Integer idPedido) {
         return dispatchRepository.findByIdPedido(idPedido)
-            .map(this::convertirADTO)
-            .orElse(null);
+                .map(validaciones::convertirADTO)
+                .orElse(null);
     }
-
 }

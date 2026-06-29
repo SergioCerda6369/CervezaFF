@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,5 +38,9 @@ public class Dispatch {
     @Size(min = 2, max = 100, message = "El estado de la distribución debe de tener entre 2 y 100 caracteres.")
     @Column(nullable = false, length = 100)
     private String estadoDispatch;
+
+    @NotNull(message = "El ID del pedido es obligatorio.")
+    @Column(name = "id_pedido", nullable = false)
+    private Integer idPedido;
 
 }

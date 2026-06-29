@@ -8,19 +8,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.materiales.materiales.DTO.MaterialDTO;
 import com.materiales.materiales.model.Material;
 import com.materiales.materiales.repository.MaterialRepository;
 import com.materiales.materiales.service.MaterialService;
-import com.materiales.materiales.service.MaterialValidaciones; // Import agregado
+import com.materiales.materiales.service.MaterialValidaciones;
 
 import net.datafaker.Faker;
 
@@ -36,12 +34,7 @@ class MaterialesApplicationTests {
     @InjectMocks
     private MaterialService materialService;
 
-    private Faker faker = new Faker();
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    private final Faker faker = new Faker();
 
     @Test
     void testBuscarPorIdExitoso() {

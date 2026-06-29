@@ -8,12 +8,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.stocks.stocks.dto.StocksDTO;
@@ -36,12 +34,7 @@ class StocksApplicationTests {
     @InjectMocks
     private StocksService stocksService;
 
-    private Faker faker = new Faker();
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    private final Faker faker = new Faker();
 
     @Test
     void testBuscarPorIdExitoso() {
@@ -50,20 +43,18 @@ class StocksApplicationTests {
         Integer cantidadSimulado = faker.number().numberBetween(50, 1000);
         Double precioSimulado = faker.number().randomDouble(2, 2000, 5000);
 
-        Stocks stockFalso = Stocks.builder()
-                .idStockFinal(idSimulado)
-                .nombreCerveza(nombreCervezaSimulado)
-                .cantidadDisponible(cantidadSimulado)
-                .precioUnitario(precioSimulado)
-                .build();
+        Stocks stockFalso = new Stocks();
+        stockFalso.setIdStockFinal(idSimulado);
+        stockFalso.setNombreCerveza(nombreCervezaSimulado);
+        stockFalso.setCantidadDisponible(cantidadSimulado);
+        stockFalso.setPrecioUnitario(precioSimulado);
 
         String conversionValida = String.valueOf(precioSimulado);
-        StocksDTO dtoFalso = StocksDTO.builder()
-                .idStockFinal(idSimulado)
-                .nombreCerveza(nombreCervezaSimulado)
-                .cantidadDisponible(cantidadSimulado)
-                .precioUnitario(Double.valueOf(conversionValida))
-                .build();
+        StocksDTO dtoFalso = new StocksDTO();
+        dtoFalso.setIdStockFinal(idSimulado);
+        dtoFalso.setNombreCerveza(nombreCervezaSimulado);
+        dtoFalso.setCantidadDisponible(cantidadSimulado);
+        dtoFalso.setPrecioUnitario(Double.valueOf(conversionValida));
 
         when(stocksRepository.findById(idSimulado)).thenReturn(Optional.of(stockFalso));
         when(stocksValidaciones.convertirADto(stockFalso)).thenReturn(dtoFalso);

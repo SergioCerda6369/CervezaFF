@@ -12,4 +12,5 @@ public class DispatchDTO {
     private String patenteCamion;
     private String nombreConductor;
     private String estadoDispatch;
+    private Integer idPedido;
 }

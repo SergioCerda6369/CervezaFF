@@ -18,19 +18,29 @@ public class PackingService {
     @Autowired
     private PackingRepository packingRepository;
 
+    @Autowired
+    private PackingValidaciones validaciones;
+
     @Transactional
     public List<PackingDTO> obtenerTodos() {
         List<Packing> lista = packingRepository.findAll();
         List<PackingDTO> dtos = new ArrayList<>();
         for (Packing p : lista) {
-            dtos.add(convertirADTO(p));
+            dtos.add(validaciones.convertirADTO(p));
         }
         return dtos;
     }
 
     @Transactional
+    public PackingDTO buscarPorId(Integer id) {
+        Packing p = packingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Registro de envasado con ID " + id + " no encontrado."));
+        return validaciones.convertirADTO(p);
+    }
+
+    @Transactional
     public PackingDTO guardar(Packing p) {
-        return convertirADTO(packingRepository.save(p));
+        return validaciones.convertirADTO(packingRepository.save(p));
     }
 
     @Transactional
@@ -41,13 +51,4 @@ public class PackingService {
         }
         return false;
     }
-
-    private PackingDTO convertirADTO(Packing p) {
-        PackingDTO dto = new PackingDTO();
-        dto.setIdPacking(p.getIdPacking());
-        dto.setTipoEnvase(p.getTipoEnvase());
-        dto.setCantidadEnvases(p.getCantidadEnvases());
-        return dto;
-    }
-
 }

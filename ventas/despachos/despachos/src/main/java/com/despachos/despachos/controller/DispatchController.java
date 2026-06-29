@@ -1,42 +1,81 @@
 package com.despachos.despachos.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.despachos.despachos.DTO.DispatchDTO;
 import com.despachos.despachos.model.Dispatch;
 import com.despachos.despachos.service.DispatchService;
+import com.despachos.despachos.assembler.DispatchAssembler;
 
 import jakarta.validation.Valid;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
-@RequestMapping("api/despachos")
+@RequestMapping("/api/despachos")
 public class DispatchController {
+
     @Autowired
     private DispatchService dispatchService;
 
-    @GetMapping("/pedido/{idPedido}")
-    public ResponseEntity<DispatchDTO> buscarPorPedido(@PathVariable Integer idPedido) {
-        DispatchDTO dto = dispatchService.buscarPorIdPedido(idPedido); 
-        if (dto != null) {
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+    @Autowired
+    private DispatchAssembler assembler;
+
+    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<CollectionModel<EntityModel<DispatchDTO>>> listar() {
+        List<EntityModel<DispatchDTO>> despachos = dispatchService.obtenerTodos().stream()
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+
+        if (despachos.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(CollectionModel.of(
+                despachos,
+                linkTo(methodOn(DispatchController.class).listar()).withSelfRel()
+        ));
     }
 
-    @PostMapping
-    public ResponseEntity<DispatchDTO> guardar(@Valid @RequestBody Dispatch dispatch) {
-        return new ResponseEntity<>(dispatchService.guardar(dispatch), HttpStatus.CREATED);
+    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<DispatchDTO>> porId(@PathVariable Integer id) {
+        try {
+            DispatchDTO dto = dispatchService.buscarPorId(id);
+            return ResponseEntity.ok(assembler.toModel(dto));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping(value = "/pedido/{idPedido}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<DispatchDTO>> buscarPorPedido(@PathVariable Integer idPedido) {
+        DispatchDTO dto = dispatchService.buscarPorIdPedido(idPedido); 
+        if (dto != null) {
+            return ResponseEntity.ok(assembler.toModel(dto));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<DispatchDTO>> guardar(@Valid @RequestBody Dispatch dispatch) {
+        try {
+            DispatchDTO nuevo = dispatchService.guardar(dispatch);
+            return ResponseEntity
+                    .created(linkTo(methodOn(DispatchController.class).porId(nuevo.getIdDispatch())).toUri())
+                    .body(assembler.toModel(nuevo));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -46,5 +85,4 @@ public class DispatchController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 }
